@@ -45,7 +45,7 @@
 
 ## 배포 & 실행 방법
 
-- GitHub 저장소: https://github.com/<본인-github-아이디>/CodysseyB2-1
+- GitHub 저장소: https://github.com/segretoo/CodysseyB2-1
 
 ```bash
 python -m budget_app --help
