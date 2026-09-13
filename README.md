@@ -22,18 +22,18 @@
 
 ## 주요 기능
 
-| 명령                                 | 설명                                                                |
-| ------------------------------------ | ------------------------------------------------------------------- |
-| `add`                                | 거래 추가 (대화형, 미등록 카테고리 재입력/즉석등록 유도)            |
-| `list --limit N`                     | 최근 거래 N건 조회 (최신순)                                         |
-| `search`                             | `--category`/`--type`/`--from`/`--to`/`--q`/`--tag` 조건 검색       |
-| `summary --month`                    | 월별 수입/지출/잔액 + 예산 사용률/초과 경고 + 카테고리별 지출 TOP N |
-| `budget set`                         | 월별 예산 설정                                                      |
-| `category add/list/remove`           | 카테고리 관리 (사용 중이면 삭제 차단)                               |
-| `update` / `delete`                  | 거래 수정/삭제 (`--id` 지정)                                        |
-| `export` / `import`                  | CSV 내보내기/가져오기                                               |
-| `backup`                             | 데이터 파일 타임스탬프 백업                                         |
-| `recurring add/list/remove/generate` | 월급/월세 등 반복 거래 등록 및 특정 월 일괄 생성                    |
+| 명령 | 설명 |
+|---|---|
+| `add` | 거래 추가 (대화형, 미등록 카테고리 재입력/즉석등록 유도) |
+| `list --limit N` | 최근 거래 N건 조회 (최신순) |
+| `search` | `--category`/`--type`/`--from`/`--to`/`--q`/`--tag` 조건 검색 |
+| `summary --month` | 월별 수입/지출/잔액 + 예산 사용률/초과 경고 + 카테고리별 지출 TOP N |
+| `budget set` | 월별 예산 설정 |
+| `category add/list/remove` | 카테고리 관리 (사용 중이면 삭제 차단) |
+| `update` / `delete` | 거래 수정/삭제 (`--id` 지정) |
+| `export` / `import` | CSV 내보내기/가져오기 |
+| `backup` | 데이터 파일 타임스탬프 백업 |
+| `recurring add/list/remove/generate` | 월급/월세 등 반복 거래 등록 및 특정 월 일괄 생성 |
 
 ## 개발 환경
 
@@ -45,7 +45,7 @@
 
 ## 배포 & 실행 방법
 
-- GitHub 저장소: https://github.com/segretoo/CodysseyB2-1
+- GitHub 저장소: https://github.com/<본인-github-아이디>/CodysseyB2-1
 
 ```bash
 python -m budget_app --help
@@ -119,12 +119,12 @@ python -m budget_app --datadir ./other_data list
 
 클래스 책임 경계는 "이 클래스가 사라지면 어떤 지식이 함께 사라지는가"로 나눴습니다.
 
-| 클래스                  | 갖고 있는 지식                                      |
-| ----------------------- | --------------------------------------------------- |
-| `TransactionRepository` | 파일이 어디 있고 어떤 형식(JSONL)인지               |
-| `TransactionService`    | 어떤 입력이 유효한지, 어떤 카테고리 삭제가 위험한지 |
-| `CategoryService`       | 카테고리 삭제 시 참조 무결성을 지켜야 한다는 규칙   |
-| `AppContext`            | 위 객체들을 어떤 조합으로 묶어야 하는지             |
+| 클래스 | 갖고 있는 지식 |
+|---|---|
+| `TransactionRepository` | 파일이 어디 있고 어떤 형식(JSONL)인지 |
+| `TransactionService` | 어떤 입력이 유효한지, 어떤 카테고리 삭제가 위험한지 |
+| `CategoryService` | 카테고리 삭제 시 참조 무결성을 지켜야 한다는 규칙 |
+| `AppContext` | 위 객체들을 어떤 조합으로 묶어야 하는지 |
 
 ## 모듈 책임과 계층 분리
 
@@ -153,15 +153,7 @@ id는 `TX-000001`, `RC-000001`처럼 6자리 zero-padding을 사용합니다. �
 `transactions.jsonl` 한 줄 예시:
 
 ```json
-{
-    "id": "TX-000001",
-    "date": "2024-01-15",
-    "type": "expense",
-    "category": "food",
-    "amount": 18000,
-    "memo": "점심",
-    "tags": ["meal"]
-}
+{"id": "TX-000001", "date": "2024-01-15", "type": "expense", "category": "food", "amount": 18000, "memo": "점심", "tags": ["meal"]}
 ```
 
 ## 원자적 갱신 (Atomic Replace)
@@ -273,24 +265,24 @@ except BudgetAppError as e:
 
 `transactions.jsonl`에 실제로 10만 건을 채운 뒤 각 연산 1회를 측정했습니다.
 
-| 연산                  | 소요 시간 | 원인                                                   |
-| --------------------- | --------- | ------------------------------------------------------ |
-| `add()` 1건           | 411 ms    | `next_id()`가 전체 파일을 훑어 최대 id를 찾음          |
-| `list_recent()`       | 376 ms    | `heapq.nlargest`가 전체를 한 번 훑음 (메모리는 제한됨) |
-| `update()` 1건        | 1,159 ms  | 10만 건 전체를 임시 파일에 다시 씀                     |
-| `delete()` 1건        | 1,129 ms  | 위와 동일                                              |
-| `update()` 연속 100회 | 114초     | 매 호출마다 전체 재작성 비용이 그대로 누적             |
+| 연산 | 소요 시간 | 원인 |
+|---|---|---|
+| `add()` 1건 | 411 ms | `next_id()`가 전체 파일을 훑어 최대 id를 찾음 |
+| `list_recent()` | 376 ms | `heapq.nlargest`가 전체를 한 번 훑음 (메모리는 제한됨) |
+| `update()` 1건 | 1,159 ms | 10만 건 전체를 임시 파일에 다시 씀 |
+| `delete()` 1건 | 1,129 ms | 위와 동일 |
+| `update()` 연속 100회 | 114초 | 매 호출마다 전체 재작성 비용이 그대로 누적 |
 
 같은 파일에 대해 `search`/`summary`는 조건에 맞는 결과나 집계값만 메모리에 남기므로 이 표에는 포함하지 않았습니다 — 이 둘이야말로 스트리밍의 이점이 가장 뚜렷하게 드러나는 연산입니다. 병목 2곳(`next_id()`, 전체 재작성)에 대한 개선 방향은 바로 위 "학습 목표 & 설명"의 해당 문항에 정리했습니다.
 
 ## 설계 Trade-off
 
-| 항목               | 선택                          | 포기한 대안과 이유                                                          |
-| ------------------ | ----------------------------- | --------------------------------------------------------------------------- |
-| 저장 포맷          | JSONL                         | CSV는 리스트 필드(tags)를 다루기 번거로워서 포기                            |
-| update 방식        | 옵션 기반                     | 대화형은 손 테스트는 편하지만 스크립트로 재현/자동 테스트하기 어려워서 포기 |
-| 카테고리 초기화    | 안 A (기본 카테고리 자동생성) | 안 B(등록 강제)는 초기 사용성이 나빠서 포기                                 |
-| 카테고리 삭제 정책 | 사용 중이면 차단              | 대체 카테고리 자동 치환은 사용자가 의도치 않은 재분류가 생길 수 있어 포기   |
+| 항목 | 선택 | 포기한 대안과 이유 |
+|---|---|---|
+| 저장 포맷 | JSONL | CSV는 리스트 필드(tags)를 다루기 번거로워서 포기 |
+| update 방식 | 옵션 기반 | 대화형은 손 테스트는 편하지만 스크립트로 재현/자동 테스트하기 어려워서 포기 |
+| 카테고리 초기화 | 안 A (기본 카테고리 자동생성) | 안 B(등록 강제)는 초기 사용성이 나빠서 포기 |
+| 카테고리 삭제 정책 | 사용 중이면 차단 | 대체 카테고리 자동 치환은 사용자가 의도치 않은 재분류가 생길 수 있어 포기 |
 
 **최신순 정렬: date 기준 vs id(등록순) 기준**
 
@@ -301,15 +293,67 @@ except BudgetAppError as e:
 
 ## 기능별 테스트 / 확인 방법
 
-| 확인 항목                                                     | 확인 방법                                                                                               |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| add/list/search/summary/export/import/update/delete 정상 동작 | `python -m unittest discover -s tests -v` (24개) + 위 "CLI 사용법 상세"의 각 명령 직접 실행             |
-| 재실행 후 데이터 유지                                         | 아무 `add` 실행 후 터미널을 새로 열어 `list` 재실행 — 그대로 남아있는지 확인                            |
-| category 사용 중 삭제 차단                                    | `category remove food`(사용 중이면 차단) vs 미사용 카테고리 삭제(성공) 각각 실행                        |
-| budget 사용률/초과 경고                                       | `budget set` 후 `summary`에서 "사용률 N%" 문구 및 초과 시 경고 문구 확인                                |
-| CSV 스키마(UTF-8/헤더/컬럼)                                   | `export --out t.csv --month ...` 후 `cat t.csv`로 `date,type,category,amount,memo,tags` 헤더 확인       |
-| 스택트레이스 없이 오류+힌트                                   | 존재하지 않는 id로 `update`/`delete` 실행 — `[오류]`/`[힌트]` 두 줄만 출력되고 트레이스백이 없는지 확인 |
-| 오류 종료 코드                                                | 위 명령 실행 직후 `echo $?`로 `1` 확인, 필수 옵션 누락 시(예: `summary` 단독 실행) `echo $?`로 `2` 확인 |
+`python -m unittest discover -s tests -v` 로 24개 자동 테스트를 먼저 돌린 뒤, 아래 순서를 위에서부터 이어서 실행하면 평가 항목 1의 체크리스트 전부를 한 번에 확인할 수 있습니다.
+
+**0) 카테고리 기본값 — `category` 동작 확인 시작**
+```bash
+python -m budget_app category list
+```
+
+**1) 거래 추가 — `add` 확인**
+```bash
+python -m budget_app add
+```
+
+**2) 방금 넣은 데이터가 남아있는지 — `list` + 재실행 후 데이터 유지 확인**
+```bash
+python -m budget_app list --limit 5
+```
+> 터미널을 한 번 새로 열어서 이 명령만 다시 실행해도 같은 결과가 나오면, "재실행해도 데이터 유지"가 실제로 확인된 것입니다.
+
+**3) 검색 — `search` 확인**
+```bash
+python -m budget_app search --category food
+```
+
+**4) 예산 설정 + 요약 — `budget set` 저장 및 summary 사용률/초과 확인**
+```bash
+python -m budget_app budget set --month 2024-01 --amount 500000
+python -m budget_app summary --month 2024-01
+```
+
+**5) 카테고리 삭제 — 사용 중 카테고리 처리 확인**
+```bash
+python -m budget_app category remove food   # 사용 중이면 차단돼야 정상
+python -m budget_app category remove etc     # 미사용이면 성공해야 정상
+```
+
+**6) 수정/삭제 — `update`/`delete` 확인**
+```bash
+python -m budget_app update --id TX-000001 --amount 18000
+python -m budget_app delete --id TX-000001
+```
+
+**7) CSV 내보내기/가져오기 — `export`/`import` 스키마(UTF-8, 헤더, 컬럼) 확인**
+```bash
+python -m budget_app export --out test.csv --month 2024-01
+cat test.csv          # 헤더가 date,type,category,amount,memo,tags 인지, UTF-8로 깨짐 없는지 확인
+python -m budget_app import --from test.csv
+```
+
+**8) 오류 상황 — 스택트레이스 없이 오류+힌트, 종료 코드 확인**
+```bash
+python -m budget_app update --id TX-999999 --amount 1000
+echo $?
+```
+> `[오류]`/`[힌트]` 두 줄만 출력되고 트레이스백이 없는지, `echo $?`가 `1`(0이 아님)인지 확인합니다.
+
+**9) (참고) 필수 옵션 자체가 없는 경우 — argparse 자체 오류 확인**
+```bash
+python -m budget_app summary
+echo $?
+```
+> 이 경우는 argparse가 자체적으로 사용법을 출력하고 종료 코드 `2`로 끝납니다 (역시 0이 아님).
 
 ## 배운 것 & 마무리
 
