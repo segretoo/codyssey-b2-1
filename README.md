@@ -45,7 +45,7 @@
 
 ## 배포 & 실행 방법
 
-- GitHub 저장소: https://github.com/segretoo/CodysseyB2-1
+- GitHub 저장소: https://github.com/<본인-github-아이디>/CodysseyB2-1
 
 ```bash
 python -m budget_app --help
@@ -354,6 +354,15 @@ python -m budget_app summary
 echo $?
 ```
 > 이 경우는 argparse가 자체적으로 사용법을 출력하고 종료 코드 `2`로 끝납니다 (역시 0이 아님).
+
+## 보너스 구현 현황
+
+| 보너스 | 구현 여부 | 위치 | 설명 |
+|---|---|---|---|
+| 1. 백업 기능 | ✅ | `cli/handlers.py`의 `handle_backup`, 명령: `backup` | 4개 데이터 파일을 `data/backups/<타임스탬프>/`에 통째로 복사. 파일이 깨지거나 잘못 수정됐을 때 되돌릴 수 있는 안전망 |
+| 2. 반복 내역 기능 | ✅ | `services/recurring_service.py`, 명령: `recurring add/list/remove/generate` | 월급/월세 같은 반복 규칙을 한 번만 등록하면 특정 월에 실제 거래로 일괄 생성. `recurring:<규칙id>` 태그로 같은 달 중복 생성을 막음 |
+| 3. 콘솔 출력 테이블 정렬 | ✅ | `utils.py`의 `format_table()`, `list`/`search`/`category list`/`recurring list`에 적용 | 외부 라이브러리 없이 문자열 폭 계산만으로 표 형태 정렬. 한글은 폭 2로 계산해 영어와 섞여도 깨지지 않음 |
+| 4. 저장 원자성 강화 | ✅ | `storage/*.py`의 `_rewrite_all()`/`_rewrite()` (자세한 내용은 위 "원자적 갱신" 섹션) | update/delete/category remove/budget set 전부 임시파일 + `os.replace()` 패턴. 핵심 요구사항을 구현하는 과정에서 자연스럽게 충족됨 |
 
 ## 배운 것 & 마무리
 
