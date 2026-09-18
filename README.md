@@ -45,7 +45,7 @@
 
 ## 배포 & 실행 방법
 
-- GitHub 저장소: https://github.com/<본인-github-아이디>/CodysseyB2-1
+- GitHub 저장소: https://github.com/segretoo/codyssey-b2-1
 
 ```bash
 python -m budget_app --help
@@ -87,13 +87,13 @@ tests/
 # 거래
 python -m budget_app add
 python -m budget_app list --limit 10
-python -m budget_app search --category food --from 2024-01-01 --to 2024-01-31
+python -m budget_app search --category food --from 2026-01-01 --to 2026-01-31
 python -m budget_app update --id TX-000001 --amount 18000 --memo "수정"
 python -m budget_app delete --id TX-000001
 
 # 요약 / 예산
-python -m budget_app summary --month 2024-01 --top 3
-python -m budget_app budget set --month 2024-01 --amount 500000
+python -m budget_app summary --month 2026-01 --top 3
+python -m budget_app budget set --month 2026-01 --amount 500000
 
 # 카테고리
 python -m budget_app category list
@@ -101,13 +101,13 @@ python -m budget_app category add
 python -m budget_app category remove food
 
 # 데이터 이동 / 백업
-python -m budget_app export --out out.csv --month 2024-01
+python -m budget_app export --out out.csv --month 2026-01
 python -m budget_app import --from out.csv
 python -m budget_app backup
 
 # 반복 거래 (보너스)
 python -m budget_app recurring add
-python -m budget_app recurring generate --month 2024-03
+python -m budget_app recurring generate --month 2026-03
 
 # 저장 위치 변경 (모든 명령 공통)
 python -m budget_app --datadir ./other_data list
@@ -153,7 +153,7 @@ id는 `TX-000001`, `RC-000001`처럼 6자리 zero-padding을 사용합니다. �
 `transactions.jsonl` 한 줄 예시:
 
 ```json
-{"id": "TX-000001", "date": "2024-01-15", "type": "expense", "category": "food", "amount": 18000, "memo": "점심", "tags": ["meal"]}
+{"id": "TX-000001", "date": "2026-01-15", "type": "expense", "category": "food", "amount": 18000, "memo": "점심", "tags": ["meal"]}
 ```
 
 ## 원자적 갱신 (Atomic Replace)
@@ -250,7 +250,7 @@ except BudgetAppError as e:
 - 원인1: `next_id()`가 새 거래를 추가할 때마다 전체 파일을 훑어서 최대 id를 찾습니다 — 10만 건에서는 이것만으로 0.4초가 걸립니다.
 - 원인2: `update()`/`delete()`는 원자적 교체를 위해 매번 전체 파일을 다시 씁니다 — 10만 줄짜리 파일을 건드릴 때마다 1초 이상이 걸리고, 반복하면 그대로 누적됩니다.
 - 개선 방향1: 순번 대신 `uuid.uuid4()`(표준 라이브러리)를 쓰면 파일을 훑지 않고도 고유 id를 즉시 만들 수 있습니다 (대신 id가 짧고 읽기 좋은 형태는 포기해야 합니다).
-- 개선 방향2: 파일을 월별로 쪼개(`transactions/2024-01.jsonl` 등) 저장하면, update 1건당 재작성 비용이 "전체 건수"가 아니라 "그 달 건수"에만 비례하게 줄어듭니다.
+- 개선 방향2: 파일을 월별로 쪼개(`transactions/2026-01.jsonl` 등) 저장하면, update 1건당 재작성 비용이 "전체 건수"가 아니라 "그 달 건수"에만 비례하게 줄어듭니다.
 - 근본적 개선: 표준 라이브러리에 포함된 `sqlite3`로 옮기면 인덱스 기반으로 update/delete가 대수 시간(logarithmic)이 되어, 파일 통째 재작성 자체가 필요 없어집니다 — "표준 라이브러리만 사용" 제약 안에서도 가능한 가장 확실한 해결책입니다.
 
 **Q. import CSV에 일부 깨진 행이 섞이면 어떻게 처리해 사용자 신뢰를 지킬까요?**
@@ -318,8 +318,8 @@ python -m budget_app search --category food
 
 **4) 예산 설정 + 요약 — `budget set` 저장 및 summary 사용률/초과 확인**
 ```bash
-python -m budget_app budget set --month 2024-01 --amount 500000
-python -m budget_app summary --month 2024-01
+python -m budget_app budget set --month 2026-01 --amount 500000
+python -m budget_app summary --month 2026-01
 ```
 
 **5) 카테고리 삭제 — 사용 중 카테고리 처리 확인**
@@ -336,7 +336,7 @@ python -m budget_app delete --id TX-000001
 
 **7) CSV 내보내기/가져오기 — `export`/`import` 스키마(UTF-8, 헤더, 컬럼) 확인**
 ```bash
-python -m budget_app export --out test.csv --month 2024-01
+python -m budget_app export --out test.csv --month 2026-01
 cat test.csv          # 헤더가 date,type,category,amount,memo,tags 인지, UTF-8로 깨짐 없는지 확인
 python -m budget_app import --from test.csv
 ```
